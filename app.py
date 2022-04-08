@@ -31,21 +31,75 @@ df = pd.DataFrame({
     "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
 })
 
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
+df_country = pd.read_csv("https://raw.githubusercontent.com/smbillah/ist526/main/gapminder.csv")
 
-app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),#'<h1> this is a header </h1>'
-    #
-    # html.Div(children='''
-    #     Dash: A web application framework for Python.
-    # '''),
+fig_yearpop = px.bar(data_frame = df_country, 
+    x="continent",        # continent
+    y="pop",              # population    
+    color="continent",    # group/label
 
-    dcc.Graph(
-        id='example-graph',
-        figure=fig
-    )
+    range_y=[0, 8000000000],
+    title= "Population of Countries", 
+)
+
+app.layout = html.Div([
+  # first row: header
+  html.H1('In Class Activity'),
+
+  # second row: <scratter-plot> <empty> <bar chart> 
+
+  html.Div([
+         html.Div([
+           html.Div([dcc.Graph(
+               id="scatter-plot",
+               figure = fig_yearpop
+            ),
+           ],className = "ten columns"),
+           html.Div([
+                  html.H3('Filter'),   
+                  html.Br(),
+                  html.H4('Select'),
+                  dcc.RadioItems(["Red","Blue"]),
+                  html.Br(),
+                  html.H4('Slide'),
+                  dcc.Slider(0, 20, 5,
+                      value=10,
+                      id='my-slider'
+                  ),
+           ], className = "two columns"),
+
+         ], className = "twelve columns"),   
+  ], className = "row"), 
+
+
+
+  html.Div([
+    html.Div([
+      dcc.Graph(
+          id = 'year-bar',
+          figure = px.bar()
+      )
+    ], className = 'four columns'),
+    html.Div([
+              dcc.Dropdown(),
+              html.Br(),
+              html.H3("Graph summary")
+    ], className = 'two columns'),
+    html.Div([
+          dcc.Graph(
+          id = 'world-map',
+          figure = px.bar()
+      )
+    ], className = 'four columns'),
+    html.Div([
+      html.H3('Summary'),
+      html.Br(),
+      html.H4(id='output_text_1', children='Total:'),
+      html.H4(id='output_text_2', children='Details:'),
+      html.H4(id='output_text_3', children='Conclusion:')
+    ], className = 'two columns'),
+  ], className = 'row')
 ])
-
 # Run dash app
 if __name__ == "__main__":
     app.run_server(debug=False, host='0.0.0.0', port=8050)
